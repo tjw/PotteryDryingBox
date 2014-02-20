@@ -155,7 +155,7 @@ void loop(void)
     }
     //delay(2000);
 
-	postData(t, t);
+	postData(t, h);
 	delay(30000);
 }
 
