@@ -1,0 +1,26 @@
+#!/usr/bin/env ruby
+
+require 'webrick'
+#require 'tempfile'
+
+request = WEBrick::HTTPRequest.new(WEBrick::Config::HTTP)
+request.parse(STDIN)
+
+File.open("/tmp/log", "w") {|f|
+  f.write(request.to_s)
+}
+
+success = true
+
+response = WEBrick::HTTPResponse.new(WEBrick::Config::HTTP)
+
+if success
+  response.status = 200 # HTTP OK: Nothing created and we aren't returning a Location
+else
+  response.status = 500 # Internal Server Error
+end
+
+response.content_type = 'text/plain'
+response.body = "OK!"
+
+STDERR.write response.to_s

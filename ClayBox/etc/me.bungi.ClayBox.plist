@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!--
+Copyright 2013 Omni Development, Inc. All rights reserved.
+
+This software may only be used and reproduced according to the
+terms in the file OmniSourceLicense.html, which should be
+distributed with this project and can also be found at
+<http://www.omnigroup.com/developer/sourcecode/sourcelicense/>.
+
+$Header: svn+ssh://source.omnigroup.com/Source/svn/Omni/trunk/OmniGroup/Scripts/DecodeCrash/etc/com.omnigroup.DecodeCrash.plist 195633 2013-09-25 22:07:56Z bungi $
+-->
+<plist version="1.0">
+<dict>
+	<key>Label</key>
+	<string>me.bungi.ClayBox</string>
+	
+	<key>ProgramArguments</key>
+	<array>
+		<string>/Users/bungi/Source/github/ClayBox/ClayBox</string>
+	</array>
+
+    <key>Sockets</key>
+    <dict>
+        <key>connection</key>
+        <dict>
+            <key>SockProtocol</key>
+            <string>TCP</string>
+            <key>SockServiceName</key>
+            <string>9123</string> <!-- Apple's launch daemons do this too in a few places -->
+        </dict>
+    </dict>
+    
+    <!-- The JSON decoding library uses iconv, which looks at this rather than just always using UTF-8. -->
+    <key>EnvironmentVariables</key>
+    <dict>
+        <key>LANG</key>
+        <string>en_US.UTF-8</string>
+        <key>PATH</key>
+        <string>/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin</string>
+    </dict>
+    
+    <!-- Maps the incoming socket to stdin -->
+    <key>inetdCompatibility</key>
+    <dict>
+        <key>Wait</key>
+        <false/>
+    </dict>
+    
+	<key>Debug</key>
+	<true/>
+	
+</dict>
+</plist>

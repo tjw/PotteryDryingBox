@@ -1,0 +1,51 @@
+#!/bin/zsh -euf
+#
+# Copyright 2012 Omni Development, Inc.  All rights reserved.
+#
+# This software may only be used and reproduced according to the
+# terms in the file OmniSourceLicense.html, which should be
+# distributed with this project and can also be found at
+# <http://www.omnigroup.com/developer/sourcecode/sourcelicense/>.
+#
+# $Header: svn+ssh://source.omnigroup.com/Source/svn/Omni/trunk/OmniGroup/Scripts/OmniAutoBuild/bin/do-install 168484 2012-06-21 21:59:08Z bungi $
+
+# Only run this on the server itself.
+
+# if [ "$HOST" != "tiny.local" -o "$USER" != "admin" ]; then
+#     echo "This should only be run on decode-crash.private.omnigroup.com as admin"
+#     exit 1
+# fi
+
+cd $0:h/..;
+
+# Do variable replacement that launchd doesn't seem to
+LAUNCHD_PLIST_NAME="me.bungi.ClayBox.plist"
+TMP_LAUNCHD_PLIST="/tmp/$LAUNCHD_PLIST_NAME-$$"
+perl -pe "s|HOME|$HOME|" < "etc/$LAUNCHD_PLIST_NAME" > "$TMP_LAUNCHD_PLIST"
+chmod go-rwx "$TMP_LAUNCHD_PLIST"
+
+LAUNCHD_DIR="$HOME/Library/LaunchDaemons"
+mkdir -p "$LAUNCHD_DIR"
+
+if [ ! -f "$LAUNCHD_DIR/$LAUNCHD_PLIST_NAME" ]; then
+	echo "Installing launch daemon"
+	mv "$TMP_LAUNCHD_PLIST" "$LAUNCHD_DIR/$LAUNCHD_PLIST_NAME"
+	launchctl load "$LAUNCHD_DIR/$LAUNCHD_PLIST_NAME"
+elif ! cmp --quiet "$TMP_LAUNCHD_PLIST" "$LAUNCHD_DIR/$LAUNCHD_PLIST_NAME"; then
+	echo "Updating launch daemon"
+	launchctl unload "$LAUNCHD_DIR/$LAUNCHD_PLIST_NAME" || echo "... wasn't loaded"
+	mv "$TMP_LAUNCHD_PLIST" "$LAUNCHD_DIR/$LAUNCHD_PLIST_NAME"
+	launchctl load "$LAUNCHD_DIR/$LAUNCHD_PLIST_NAME"
+else
+	rm "$TMP_LAUNCHD_PLIST"
+	chmod go-rwx "$LAUNCHD_DIR/$LAUNCHD_PLIST_NAME" # Fix any previous permission problems
+
+	echo "Restarting launch daemon"
+	
+	# Handle a previous error in loading
+	if launchctl list me.bungi.ClayBox; then
+		launchctl stop me.bungi.ClayBox
+	else
+		launchctl load "$LAUNCHD_DIR/$LAUNCHD_PLIST_NAME"
+	fi	
+fi

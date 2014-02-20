@@ -189,8 +189,9 @@ static void postData(float temperature, float humidity)
    
    WWWPrint wwwp(www);
    
-   www.fastrprint("?count="); wwwp.print(postCount);
-   www.fastrprint("?temperature="); wwwp.print(temperature);
+   www.fastrprint("?id=pottery_box=");
+   www.fastrprint("&count="); wwwp.print(postCount);
+   www.fastrprint("&temperature="); wwwp.print(temperature);
    www.fastrprint("&humidity="); wwwp.print(humidity);
    
    www.fastrprint(F(" HTTP/1.1\r\n"));
