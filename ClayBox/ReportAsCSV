@@ -1,0 +1,27 @@
+#!/usr/bin/env ruby 
+
+# Might be better to log lines as JSON instead of a HTTP-log like format...
+
+require 'uri'
+
+log_lines = File.read("/Users/Shared/bungi/ClayBox.log").split(/[\r\n]+/)
+
+print "date,temperature,humidity\n"
+
+log_lines.each {|l|
+  components = l.split(/\s+/)
+  next if (components.length != 3)
+
+  date = components[0]
+  uri = URI(components[2])
+  
+  parameters = {}
+  uri.query.split("&").each {|kv|
+    pair = kv.split("=")
+    if (pair.count == 2)
+      parameters[pair[0]] = pair[1]
+    end
+  }
+  
+  print "#{date},#{parameters['temperature']},#{parameters['humidity']}\n"
+}
