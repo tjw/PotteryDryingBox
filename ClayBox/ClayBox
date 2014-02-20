@@ -6,8 +6,11 @@ require 'webrick'
 request = WEBrick::HTTPRequest.new(WEBrick::Config::HTTP)
 request.parse(STDIN)
 
-File.open("/tmp/log", "w") {|f|
-  f.write(request.to_s)
+File.open("/Users/Shared/bungi/ClayBox.log", "w") {|f|
+  f.write(DateTime.now.iso8601 + " ")
+  f.write(request.request_method + " ")
+  f.write(request.request_uri.to_s)
+  f.write("\n");
 }
 
 success = true
@@ -21,6 +24,6 @@ else
 end
 
 response.content_type = 'text/plain'
-response.body = "OK!"
+response.body = "OK!\n"
 
 STDERR.write response.to_s

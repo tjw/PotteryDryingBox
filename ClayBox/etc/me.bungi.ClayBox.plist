@@ -17,7 +17,7 @@ $Header: svn+ssh://source.omnigroup.com/Source/svn/Omni/trunk/OmniGroup/Scripts/
 	
 	<key>ProgramArguments</key>
 	<array>
-		<string>/Users/bungi/Source/github/ClayBox/ClayBox</string>
+		<string>/Users/bungi/Documents/Arduino/Pottery_Dryer/ClayBox/ClayBox</string>
 	</array>
 
     <key>Sockets</key>
