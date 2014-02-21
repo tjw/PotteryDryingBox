@@ -46,18 +46,21 @@ static const float TargetHumidity = 99.0; // Want it very humid to keep the work
 static unsigned ConsecutiveAboveTemperatureReadings = 0;
 static unsigned FanCycles = 0;
 static bool Done = false;
-static int NoDateErrorCount = 0;
+static int NoDataErrorCount = 0;
 
 void loop(void)
 {
-	if (Done)
+	if (Done) {
+		Heater.off();
+		Fan.off();
 		return;
+	}
 	
 	Temperature::Result result;
 	if (!Temperature::read(result)) {
 		WiFi::postInfo("no_data");
-		NoDateErrorCount++;
-		if (NoDateErrorCount > 5) {
+		NoDataErrorCount++;
+		if (NoDataErrorCount >= 25) {
 			// Just turn off after a bit if something seems wrong
 			WiFi::postInfo("done");
 			Done = true;
@@ -82,7 +85,6 @@ void loop(void)
 	
 	// Eventually, heating will not produce more moisture.
 	if (ConsecutiveAboveTemperatureReadings > 100 && result.humidity < TargetHumidity) {
-		Heater.off();
 		WiFi::postInfo("done");
 		Done = true;
 		return;
