@@ -43,7 +43,7 @@ void setup(void)
 static const float TargetMinTemperature = 40.0; // 104 F
 static const float TargetMaxTemperature = 42.0; // In full-on heating test, it took from 2014-02-20T16:07:18-08:00 to 2014-02-20T17:35:30-08:00 to go from 40.0 to 42.0.
 
-static const float TargetHumidity = 99.0; // Want it very humid to keep the work's surface open to moisture flowing
+static const float TargetHumidity = 75.0; // Was flat at 80-81% for 30 minutes after being above 40ºC for 30 minutes. Might be due to box sitting on cardboard (inside of box had plenty of water drops, so it was plenty humid...)
 
 static unsigned ConsecutiveAboveTemperatureReadings = 0;
 static unsigned FanCycles = 0;
