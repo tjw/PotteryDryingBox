@@ -3,6 +3,20 @@
 # Might be better to log lines as JSON instead of a HTTP-log like format...
 
 require 'uri'
+require 'getoptlong'
+
+$AfterDate = nil
+GetoptLong.new(
+  [ "--after", "-a", GetoptLong::REQUIRED_ARGUMENT ]
+).each do |opt,arg|
+  case opt
+  when "--after"
+    $AfterDate = arg
+  else
+    usage()
+  end
+end
+
 
 log_lines = File.read("/Users/Shared/bungi/ClayBox.log").split(/[\r\n]+/)
 
@@ -23,5 +37,11 @@ log_lines.each {|l|
     end
   }
   
-  print "#{date},#{parameters['temperature']},#{parameters['humidity']}\n"
+  next if $AfterDate && $AfterDate > date
+    
+  temperature = parameters['temperature']
+  humidity = parameters['humidity']
+  next unless temperature && humidity
+  
+  print "#{date},#{temperature},#{humidity}\n"
 }
