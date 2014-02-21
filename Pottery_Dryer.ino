@@ -5,20 +5,6 @@
 
 #include "xWiFi.h"
 #include "Temperature.h"
-#include "pins.h"
-
-#include <ccspi.h>
-#include <SPI.h>
-#include <string.h>
-
-/////
-///// Temperature sensor support
-/////
-
-
-/////
-///// Main app
-/////
 
 void setup(void)
 {
