@@ -8,6 +8,14 @@
 #include "ToggleDevice.h"
 #include "pins.h"
 
+/*
+
+ TODO:
+ - Maybe add an initial soak period once reaching the target temperature range (to allow the heat to penetrate the clay)... heading period might be long enough for this to happen naturally.
+ - Actually obey the min/max heat and turn the heater off while above the minimum... will have to see if this is worth done once I see the temp/humidity drop from a fan cycle.
+
+*/
+
 static ToggleDevice Fan(FanPin);
 static ToggleDevice Heater(HeaterPin);
 	
@@ -32,12 +40,6 @@ void setup(void)
 	Fan.off();
 }
 
-/*
-Heat to the target minimum temperature.
-Once reached:
-   - If the humidity has been high for a while, vent for a few seconds
-   - If the temperature exceeds the maximum target temperature, vent for a few seconds?
-*/
 static const float TargetMinTemperature = 40.0; // 104 F
 static const float TargetMaxTemperature = 42.0; // In full-on heating test, it took from 2014-02-20T16:07:18-08:00 to 2014-02-20T17:35:30-08:00 to go from 40.0 to 42.0.
 
