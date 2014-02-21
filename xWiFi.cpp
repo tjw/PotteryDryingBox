@@ -73,36 +73,8 @@ void WiFi::setup(void)
 	// cc3000.disconnect();
 }
 
-static unsigned postCount = 0;
-void WiFi::postData(float temperature, float humidity)
+void WiFi::_readResponse(Adafruit_CC3000_Client &www)
 {
-	/* Try connecting to the website.
-	Note: HTTP/1.1 protocol is used to keep the server from closing the connection before all data is read.
-	*/
-	Adafruit_CC3000_Client www = cc3000.connectTCP(ip, PORT);
-	if (www.connected()) {
-		www.fastrprint("POST ");
-		www.fastrprint(WEBPAGE);
-   
-//		WWWPrint wwwp(www);
-   
-		www.fastrprint("?id=pottery_box=");
-		www.fastrprint("&count="); www.print(postCount);
-		www.fastrprint("&temperature="); www.print(temperature);
-		www.fastrprint("&humidity="); www.print(humidity);
-   
-		www.fastrprint(" HTTP/1.1\r\n");
-		www.fastrprint("Host: "); www.fastrprint(WEBSITE); www.fastrprint("\r\n");
-		www.fastrprint("Content-Length: 0\r\n");
-		www.fastrprint("\r\n");
-		www.println();
-   
-		postCount++;
-	} else {
-		Serial.println("Connection failed");
-		return;
-	}
-
 	Serial.println("-------------------------------------");
  
 	/* Read data until either the connection is closed, or the idle timeout is reached. */ 
@@ -116,4 +88,59 @@ void WiFi::postData(float temperature, float humidity)
 	}
 	www.close();
 	Serial.println("-------------------------------------");
+}
+
+static unsigned postCount = 0;
+void WiFi::postData(float temperature, float humidity, uint32_t fanCycles)
+{
+	/* Try connecting to the website.
+	Note: HTTP/1.1 protocol is used to keep the server from closing the connection before all data is read.
+	*/
+	Adafruit_CC3000_Client www = cc3000.connectTCP(ip, PORT);
+	if (www.connected()) {
+		www.fastrprint("POST ");
+		www.fastrprint(WEBPAGE);
+      
+		www.fastrprint("?id=pottery_box=");
+		www.fastrprint("&count="); www.print(postCount);
+		www.fastrprint("&temperature="); www.print(temperature);
+		www.fastrprint("&humidity="); www.print(humidity);
+		www.fastrprint("&fanCycles="); www.print(fanCycles);
+   
+		www.fastrprint(" HTTP/1.1\r\n");
+		www.fastrprint("Host: "); www.fastrprint(WEBSITE); www.fastrprint("\r\n");
+		www.fastrprint("Content-Length: 0\r\n");
+		www.fastrprint("\r\n");
+		www.println();
+   
+		postCount++;
+	} else {
+		Serial.println("Connection failed");
+		return;
+	}
+
+	_readResponse(www);
+}
+
+void WiFi::postInfo(const char *info)
+{
+	Adafruit_CC3000_Client www = cc3000.connectTCP(ip, PORT);
+	if (www.connected()) {
+		www.fastrprint("POST ");
+		www.fastrprint(WEBPAGE);
+      
+		www.fastrprint("?id=pottery_box=");
+		www.fastrprint("&info="); www.fastrprint(info);
+   
+		www.fastrprint(" HTTP/1.1\r\n");
+		www.fastrprint("Host: "); www.fastrprint(WEBSITE); www.fastrprint("\r\n");
+		www.fastrprint("Content-Length: 0\r\n");
+		www.fastrprint("\r\n");
+		www.println();
+	} else {
+		Serial.println("Connection failed");
+		return;
+	}
+
+	_readResponse(www);
 }

@@ -19,11 +19,11 @@ bool Temperature::read(Result &result)
 {
 	// Reading temperature or humidity takes about 250 milliseconds!
 	// Sensor readings may also be up to 2 seconds 'old' (its a very slow sensor)
-	float h = dht.readHumidity();
-	float t = dht.readTemperature();
-
+	result.temperature = dht.readTemperature();
+	result.humidity = dht.readHumidity();
+	
 	// check if returns are valid, if they are NaN (not a number) then something went wrong!
-	if (isnan(t) || isnan(h)) {
+	if (isnan(result.temperature) || isnan(result.humidity)) {
 		Serial.println("Failed to read from DHT");
 		return false;
 	} else {
