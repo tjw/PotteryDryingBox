@@ -1,43 +1,41 @@
+// These have to be here for the Arduino IDE to automatically add -I directives to the compile...
+#include "Adafruit_CC3000.h"
 #include "DHT.h"
+#include "SPI.h"
 
-#define DHTTYPE DHT22   // DHT 22  (AM2302)
+#include "xWiFi.h"
+#include "Temperature.h"
+#include "pins.h"
 
-// Pins
-#define TEMP_HUM (2)
-#define FAN (3) // PWM for variable fan speed
-#define HEATER (4)
-#define PIXEL (6)
+#include <ccspi.h>
+#include <SPI.h>
+#include <string.h>
 
-DHT dht(TEMP_HUM, DHTTYPE);
+/////
+///// Temperature sensor support
+/////
 
-void setup() {                
-	pinMode(FAN, OUTPUT);     
-	pinMode(HEATER, OUTPUT);     
-	pinMode(PIXEL, OUTPUT);     
 
-    Serial.begin(9600); 
-    Serial.println("DHT begin!");
-    dht.begin();
+/////
+///// Main app
+/////
+
+void setup(void)
+{
+	Serial.begin(115200);
+	Serial.println("Pottery Dryer Started!\n"); 
+
+	Temperature::setup();
+	WiFi::setup();
 }
 
-void loop() {
-    // Reading temperature or humidity takes about 250 milliseconds!
-    // Sensor readings may also be up to 2 seconds 'old' (its a very slow sensor)
-    float humidity = dht.readHumidity();
-    float temperature = dht.readTemperature();
-	
-    // check if returns are valid, if they are NaN (not a number) then something went wrong!
-    if (isnan(temperature) || isnan(humidity)) {
-      Serial.println("Failed to read from DHT");
-    } else {
-      Serial.print("Humidity: "); 
-      Serial.print(humidity);
-      Serial.print(" %\t");
-      Serial.print("Temperature: "); 
-      Serial.print(temperature);
-      Serial.println(" *C");
-    }
-	
-	// Temperature sensor doesn't update very quickly, so chill.
-	delay(2000);
+void loop(void)
+{
+	Temperature::Result result;
+	if (!Temperature::read(result)) {
+		WiFi::postData(-1, -1);
+	} else {
+		WiFi::postData(result.temperature, result.humidity);
+	}
+	delay(30000);
 }
