@@ -144,3 +144,27 @@ void WiFi::postInfo(const char *info)
 
 	_readResponse(www);
 }
+
+void WiFi::postSetting(const char *name, float value)
+{
+	Adafruit_CC3000_Client www = cc3000.connectTCP(ip, PORT);
+	if (www.connected()) {
+		www.fastrprint("POST ");
+		www.fastrprint(WEBPAGE);
+      
+		www.fastrprint("?id=pottery_box=");
+		www.fastrprint("&setting="); www.fastrprint(name);
+		www.fastrprint("&value="); www.print(value);
+   
+		www.fastrprint(" HTTP/1.1\r\n");
+		www.fastrprint("Host: "); www.fastrprint(WEBSITE); www.fastrprint("\r\n");
+		www.fastrprint("Content-Length: 0\r\n");
+		www.fastrprint("\r\n");
+		www.println();
+	} else {
+		Serial.println("Connection failed");
+		return;
+	}
+
+	_readResponse(www);
+}
